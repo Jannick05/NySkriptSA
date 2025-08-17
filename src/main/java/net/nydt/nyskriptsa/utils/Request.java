@@ -13,7 +13,7 @@ public class Request {
             URL url = new URL("https://api.superawesome.dk/players/" + username);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setReadTimeout(5000); // 5 sekunders timeout
+            connection.setReadTimeout(5000);
             connection.setConnectTimeout(5000);
 
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {

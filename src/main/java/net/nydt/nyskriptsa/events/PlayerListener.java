@@ -21,7 +21,6 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        // Kør API-anmodningen asynkront
         new BukkitRunnable() {
             @Override
             public void run() {

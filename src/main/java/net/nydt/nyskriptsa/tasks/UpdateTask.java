@@ -42,7 +42,6 @@ public class UpdateTask extends BukkitRunnable {
                         return;
                     }
 
-                    // Sammenlign point
                     if (oldUser.getLobbyPoints() != newUser.getLobbyPoints()) {
                         Bukkit.getPluginManager().callEvent(new SALobbyPointsChangeEvent(oldUser, newUser, player));
                     }
@@ -50,7 +49,6 @@ public class UpdateTask extends BukkitRunnable {
                         Bukkit.getPluginManager().callEvent(new SAPlayerPointsChangeEvent(oldUser, newUser, player));
                     }
 
-                    // Sammenlign roller og dage (null-sikker)
                     if (!Objects.equals(oldUser.getRole(), newUser.getRole())) {
                         Bukkit.getPluginManager().callEvent(new SARoleChangeEvent(oldUser, newUser, player));
                     }
@@ -71,10 +69,8 @@ public class UpdateTask extends BukkitRunnable {
                             SAUser.Rate oldRate = oldRatesByUuid.get(newRate.getUuid());
 
                             if (oldRate == null) {
-                                // Ny rate tilføjet
                                 Bukkit.getPluginManager().callEvent(new SARateReceivedEvent(oldUser, newUser, player, newRate));
                             } else {
-                                // Eksisterende rate ændret
                                 if (oldRate.getPoints() != newRate.getPoints() || !Objects.equals(oldRate.getType(), newRate.getType())) {
                                     Bukkit.getPluginManager().callEvent(new SARateChangedEvent(oldUser, newUser, player, oldRate, newRate));
                                 }
@@ -82,7 +78,6 @@ public class UpdateTask extends BukkitRunnable {
                         }
                     }
 
-                    // Badges
                     Set<SAUser.Badge> oldBadges = new HashSet<>(oldUser.getBadges() != null ? oldUser.getBadges() : Collections.emptySet());
                     Set<SAUser.Badge> newBadges = new HashSet<>(newUser.getBadges() != null ? newUser.getBadges() : Collections.emptySet());
                     Set<SAUser.Badge> addedBadges = new HashSet<>(newBadges);
@@ -94,7 +89,6 @@ public class UpdateTask extends BukkitRunnable {
                         Bukkit.getPluginManager().callEvent(new SABadgesChangeEvent(oldUser, newUser, player, addedBadges, removedBadges));
                     }
 
-                    // ServerBoosts
                     Set<SAUser.ServerBoost> oldBoosts = new HashSet<>(oldUser.getServerBoosts() != null ? oldUser.getServerBoosts() : Collections.emptySet());
                     Set<SAUser.ServerBoost> newBoosts = new HashSet<>(newUser.getServerBoosts() != null ? newUser.getServerBoosts() : Collections.emptySet());
                     Set<SAUser.ServerBoost> addedBoosts = new HashSet<>(newBoosts);
@@ -106,7 +100,6 @@ public class UpdateTask extends BukkitRunnable {
                         Bukkit.getPluginManager().callEvent(new SAServerBoostsChangeEvent(oldUser, newUser, player, addedBoosts, removedBoosts));
                     }
 
-                    // Servers
                     Set<SAUser.Server> oldServers = new HashSet<>(oldUser.getServers() != null ? oldUser.getServers() : Collections.emptySet());
                     Set<SAUser.Server> newServers = new HashSet<>(newUser.getServers() != null ? newUser.getServers() : Collections.emptySet());
                     Set<SAUser.Server> addedServers = new HashSet<>(newServers);
@@ -118,7 +111,6 @@ public class UpdateTask extends BukkitRunnable {
                         Bukkit.getPluginManager().callEvent(new SAServersChangeEvent(oldUser, newUser, player, addedServers, removedServers));
                     }
 
-                    // Gem de nye data i databasen
                     plugin.getDatabaseManager().saveUser(newUser);
 
                 }

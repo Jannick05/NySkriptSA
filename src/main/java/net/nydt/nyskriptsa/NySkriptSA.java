@@ -16,17 +16,14 @@ public class NySkriptSA extends JavaPlugin {
     public void onEnable() {
         getLogger().info("Nyskriptsa Plugin er aktiveret!");
 
-        // Denne linje sørger for, at plugin-mappen eksisterer
         if (!getDataFolder().exists()) {
             getDataFolder().mkdir();
         }
 
-        // Initialiserer databasen
         this.databaseManager = new DatabaseManager(this);
         databaseManager.connect();
         databaseManager.setupTables();
 
-        // Registrer event-lytteren
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
 
         if(getServer().getPluginManager().getPlugin("Skript") != null) try {
@@ -35,7 +32,6 @@ public class NySkriptSA extends JavaPlugin {
             throw new RuntimeException("Failed to load the addon.", e);
         }
 
-        // Start den planlagte opgave
         new UpdateTask(this).runTaskTimer(this, 20L * 60L, 20L * 60L);
     }
 

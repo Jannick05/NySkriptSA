@@ -25,7 +25,6 @@ public class SAUser {
     private boolean pro;
     private boolean vip;
 
-    // Getters
     public String getUsername() { return username; }
     public String getUuid() { return uuid; }
     public String getRole() { return role; }
@@ -47,7 +46,6 @@ public class SAUser {
     public boolean isPro() { return pro; }
     public boolean isVip() { return vip; }
 
-    // Setters
     public void setUsername(String username) { this.username = username; }
     public void setUuid(String uuid) { this.uuid = uuid; }
     public void setRole(String role) { this.role = role; }
@@ -69,7 +67,6 @@ public class SAUser {
     public void setPro(boolean pro) { this.pro = pro; }
     public void setVip(boolean vip) { this.vip = vip; }
 
-    // Nested classes
     public static class Badge {
         private String name;
         private String color;
