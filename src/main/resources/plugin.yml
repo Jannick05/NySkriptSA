@@ -1,0 +1,9 @@
+name: NySkriptSA
+website: 'https://github.com/Jannick05/NySkriptSA'
+authors:
+  - Nydt
+version: 1.0
+api-version: 1.8
+main: net.nydt.nyskriptsa.NySkriptSA
+softdepend:
+  - Skript
