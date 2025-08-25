@@ -10,10 +10,12 @@ import java.io.IOException;
 
 public class NySkriptSA extends JavaPlugin {
 
+    private  static NySkriptSA instance;
     private DatabaseManager databaseManager;
 
     @Override
     public void onEnable() {
+        instance = this;
         getLogger().info("Nyskriptsa Plugin er aktiveret!");
 
         if (!getDataFolder().exists()) {
@@ -45,5 +47,9 @@ public class NySkriptSA extends JavaPlugin {
 
     public DatabaseManager getDatabaseManager() {
         return databaseManager;
+    }
+
+    public static NySkriptSA getInstance() {
+        return instance;
     }
 }
