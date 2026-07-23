@@ -246,4 +246,4 @@ Check plugin folder's skriveadgang og disk plads.
 
 ## Licens & Support
 
-Lavet af Jannick George
+Lavet af Jannick
