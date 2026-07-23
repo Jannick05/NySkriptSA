@@ -21,7 +21,7 @@ public class ExprPlayerDiscordID extends SimplePropertyExpression<OfflinePlayer,
         if (player.isOnline()) {
             user = NySkriptSA.getInstance().getDatabaseManager().getUser(player.getUniqueId().toString());
         } else {
-            user = Request.retreiveUser(player.getName());
+            user = Request.retrieveUser(player.getName());
         }
 
         return (user != null && user.getDiscordID() != null) ? user.getDiscordID() : "none";

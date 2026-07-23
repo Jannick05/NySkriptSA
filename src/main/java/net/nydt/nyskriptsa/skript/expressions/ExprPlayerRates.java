@@ -21,10 +21,10 @@ public class ExprPlayerRates extends SimplePropertyExpression<OfflinePlayer, Int
         if (player.isOnline()) {
             user = NySkriptSA.getInstance().getDatabaseManager().getUser(player.getUniqueId().toString());
         } else {
-            user = Request.retreiveUser(player.getName());
+            user = Request.retrieveUser(player.getName());
         }
 
-        return (user != null) ? user.getRates().size() : 0;
+        return (user != null && user.getRates() != null) ? user.getRates().size() : 0;
     }
 
     @Override

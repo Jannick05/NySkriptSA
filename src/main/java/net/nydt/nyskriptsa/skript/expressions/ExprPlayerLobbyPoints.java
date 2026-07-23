@@ -21,7 +21,7 @@ public class ExprPlayerLobbyPoints extends SimplePropertyExpression<OfflinePlaye
         if (player.isOnline()) {
             user = NySkriptSA.getInstance().getDatabaseManager().getUser(player.getUniqueId().toString());
         } else {
-            user = Request.retreiveUser(player.getName());
+            user = Request.retrieveUser(player.getName());
         }
 
         return (user != null) ? user.getLobbyPoints() : 0;

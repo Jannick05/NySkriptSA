@@ -1,0 +1,21 @@
+target/
+build/
+bin/
+out/
+.gradle/
+
+# Færdige .jar filer (Claude kan ikke læse binære filer)
+*.jar
+
+# IDE og Editor specifikke filer
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp

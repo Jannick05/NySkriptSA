@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public class UpdateTask extends BukkitRunnable {
 
@@ -35,7 +36,7 @@ public class UpdateTask extends BukkitRunnable {
                         return;
                     }
 
-                    SAUser newUser = Request.retreiveUser(player.getName());
+                    SAUser newUser = Request.retrieveUser(player.getName());
 
                     if (newUser == null) {
                         plugin.getLogger().warning("Kunne ikke hente opdaterede data fra API'en for " + player.getName() + ".");
@@ -78,43 +79,41 @@ public class UpdateTask extends BukkitRunnable {
                         }
                     }
 
-                    Set<SAUser.Badge> oldBadges = new HashSet<>(oldUser.getBadges() != null ? oldUser.getBadges() : Collections.emptySet());
-                    Set<SAUser.Badge> newBadges = new HashSet<>(newUser.getBadges() != null ? newUser.getBadges() : Collections.emptySet());
-                    Set<SAUser.Badge> addedBadges = new HashSet<>(newBadges);
-                    addedBadges.removeAll(oldBadges);
-                    Set<SAUser.Badge> removedBadges = new HashSet<>(oldBadges);
-                    removedBadges.removeAll(newBadges);
+                    checkSetChanges(
+                            oldUser.getBadges(),
+                            newUser.getBadges(),
+                            (added, removed) -> Bukkit.getPluginManager().callEvent(new SABadgesChangeEvent(oldUser, newUser, player, added, removed))
+                    );
 
-                    if (!addedBadges.isEmpty() || !removedBadges.isEmpty()) {
-                        Bukkit.getPluginManager().callEvent(new SABadgesChangeEvent(oldUser, newUser, player, addedBadges, removedBadges));
-                    }
+                    checkSetChanges(
+                            oldUser.getServerBoosts(),
+                            newUser.getServerBoosts(),
+                            (added, removed) -> Bukkit.getPluginManager().callEvent(new SAServerBoostsChangeEvent(oldUser, newUser, player, added, removed))
+                    );
 
-                    Set<SAUser.ServerBoost> oldBoosts = new HashSet<>(oldUser.getServerBoosts() != null ? oldUser.getServerBoosts() : Collections.emptySet());
-                    Set<SAUser.ServerBoost> newBoosts = new HashSet<>(newUser.getServerBoosts() != null ? newUser.getServerBoosts() : Collections.emptySet());
-                    Set<SAUser.ServerBoost> addedBoosts = new HashSet<>(newBoosts);
-                    addedBoosts.removeAll(oldBoosts);
-                    Set<SAUser.ServerBoost> removedBoosts = new HashSet<>(oldBoosts);
-                    removedBoosts.removeAll(newBoosts);
-
-                    if (!addedBoosts.isEmpty() || !removedBoosts.isEmpty()) {
-                        Bukkit.getPluginManager().callEvent(new SAServerBoostsChangeEvent(oldUser, newUser, player, addedBoosts, removedBoosts));
-                    }
-
-                    Set<SAUser.Server> oldServers = new HashSet<>(oldUser.getServers() != null ? oldUser.getServers() : Collections.emptySet());
-                    Set<SAUser.Server> newServers = new HashSet<>(newUser.getServers() != null ? newUser.getServers() : Collections.emptySet());
-                    Set<SAUser.Server> addedServers = new HashSet<>(newServers);
-                    addedServers.removeAll(oldServers);
-                    Set<SAUser.Server> removedServers = new HashSet<>(oldServers);
-                    removedServers.removeAll(newServers);
-
-                    if (!addedServers.isEmpty() || !removedServers.isEmpty()) {
-                        Bukkit.getPluginManager().callEvent(new SAServersChangeEvent(oldUser, newUser, player, addedServers, removedServers));
-                    }
+                    checkSetChanges(
+                            oldUser.getServers(),
+                            newUser.getServers(),
+                            (added, removed) -> Bukkit.getPluginManager().callEvent(new SAServersChangeEvent(oldUser, newUser, player, added, removed))
+                    );
 
                     plugin.getDatabaseManager().saveUser(newUser);
 
                 }
             }.runTaskAsynchronously(plugin);
+        }
+    }
+
+    private <T> void checkSetChanges(List<T> oldList, List<T> newList, BiConsumer<Set<T>, Set<T>> onChange) {
+        Set<T> oldSet = new HashSet<>(oldList != null ? oldList : Collections.emptySet());
+        Set<T> newSet = new HashSet<>(newList != null ? newList : Collections.emptySet());
+        Set<T> added = new HashSet<>(newSet);
+        added.removeAll(oldSet);
+        Set<T> removed = new HashSet<>(oldSet);
+        removed.removeAll(newSet);
+
+        if (!added.isEmpty() || !removed.isEmpty()) {
+            onChange.accept(added, removed);
         }
     }
 }

@@ -24,7 +24,7 @@ public class PlayerListener implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                SAUser saUser = Request.retreiveUser(player.getName());
+                SAUser saUser = Request.retrieveUser(player.getName());
 
                 if (saUser != null) {
                     plugin.getDatabaseManager().saveUser(saUser);

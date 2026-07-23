@@ -21,7 +21,7 @@ public class ExprPlayerRole extends SimplePropertyExpression<OfflinePlayer, Stri
         if (player.isOnline()) {
             user = NySkriptSA.getInstance().getDatabaseManager().getUser(player.getUniqueId().toString());
         } else {
-            user = Request.retreiveUser(player.getName());
+            user = Request.retrieveUser(player.getName());
         }
 
         return (user != null && user.getRole() != null) ? user.getRole() : "none";

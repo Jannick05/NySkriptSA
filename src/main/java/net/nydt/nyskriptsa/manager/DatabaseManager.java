@@ -106,10 +106,9 @@ public class DatabaseManager {
             return null;
         }
         String sql = "SELECT * FROM users WHERE uuid = ?;";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             ps.setString(1, uuid);
-            ResultSet rs = ps.executeQuery();
-
             if (rs.next()) {
                 SAUser user = new SAUser();
                 user.setUuid(rs.getString("uuid"));
