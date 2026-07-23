@@ -23,8 +23,8 @@ Alle disse expressions kan bruges på `offline player` objekter og henter data e
 ### Pointsystemer
 
 ```skript
-{spiller's lobby points}        # Returnerer lobbyPoints som integer
-{spiller's player points}       # Returnerer playerPoints som integer
+%spiller's lobby points%        # Returnerer lobbyPoints som integer
+%spiller's player points%       # Returnerer playerPoints som integer
 ```
 
 **Eksempel:**
@@ -37,8 +37,8 @@ on join:
 ### VIP & Pro Status
 
 ```skript
-{spiller's vip days}            # Returnerer antal VIP dage (integer)
-{spiller's pro days}            # Returnerer antal Pro dage (integer)
+%spiller's vip days%            # Returnerer antal VIP dage (integer)
+%spiller's pro days%            # Returnerer antal Pro dage (integer)
 ```
 
 **Eksempel:**
@@ -51,23 +51,23 @@ on join:
 ### Roller & Discord
 
 ```skript
-{spiller's role}                # Returnerer rolle som string (f.eks. "Admin", "Moderator")
-{spiller's discordid}           # Returnerer Discord ID som string
+%spiller's role%                # Returnerer rolle som string (f.eks. "Admin", "Moderator")
+%spiller's discordid%           # Returnerer Discord ID som string
 ```
 
 **Eksempel:**
 ```skript
 on join:
-    set {role} to player's role
-    if {role} is "Admin":
+    set {_role} to player's role
+    if {_role} is "Admin":
         send "Velkommen admin!" to player
 ```
 
 ### Badges & Ratings
 
 ```skript
-{spiller's badges}              # Returnerer antal badges som integer
-{spiller's rates}               # Returnerer antal ratings som integer
+%spiller's badges%              # Returnerer antal badges som integer
+%spiller's rates%               # Returnerer antal ratings som integer
 ```
 
 **Eksempel:**
@@ -129,7 +129,7 @@ on servers change:
 ### User Update Event
 
 ```skript
-on [super]awesome user update:
+on superawesome user update:
     send "Brugerdata blev opdateret!"
 ```
 
@@ -139,11 +139,11 @@ on [super]awesome user update:
 
 ```skript
 on join:
-    set {role} to player's role
+    set {_role} to player's role
     
-    if {role} is "Admin":
+    if {_role} is "Admin":
         add "admin" to player's groups
-    else if {role} is "Moderator":
+    else if {_role} is "Moderator":
         add "mod" to player's groups
     else if player's vip days > 0:
         add "vip" to player's groups
@@ -153,35 +153,35 @@ on join:
 
 ```skript
 on player points change:
-    set {old.points} to old-user's player points
-    set {new.points} to new-user's player points
+    set {_old.points} to old-user's player points
+    set {_new.points} to new-user's player points
     
-    if {new.points} > {old.points}:
-        set {diff} to {new.points} - {old.points}
+    if {_new.points} > {_old.points}:
+        set {_diff} to {_new.points} - {_old.points}
         give event-player diamond * {diff}
-        send "Du fik %{diff}% diamanter for dine pointslove!"
+        send "Du fik %{_diff}% diamanter for dine pointslove!"
 ```
 
 ### Notifikationer ved Pro/VIP opgradering
 
 ```skript
 on vip days change:
-    set {old.vip} to old-user's vip days
-    set {new.vip} to new-user's vip days
+    set {_old.vip} to old-user's vip days
+    set {_new.vip} to new-user's vip days
     
-    if {new.vip} > {old.vip}:
-        broadcast "&6%event-player%&r blev VIP med %{new.vip}% dage tilbage!"
+    if {_new.vip} > {o_ld.vip}:
+        broadcast "&6%event-player%&r blev VIP med %{_new.vip}% dage tilbage!"
         give event-player golden apple
 ```
 
 ### Log brugeraktivitet
 
 ```skript
-on awesome user update:
-    set {uuid} to event-player's uuid
-    set {name} to event-player's name
+on superawesome user update:
+    set {_uuid} to event-player's uuid
+    set {_name} to event-player's name
     
-    log "[NySkriptSA] Updated user: %{name}% (%{uuid}%)"
+    log "[NySkriptSA] Updated user: %{_name}% (%{_uuid}%)"
 ```
 
 ## Data Struktur
@@ -243,7 +243,3 @@ Check plugin folder's skriveadgang og disk plads.
 - **Gradle project**: Java 8 kompatibel
 - **Dependencies**: Bukkit API 1.8.8, Skript 2.7.0, SQLite JDBC
 - **Package**: `net.nydt.nyskriptsa`
-
-## Licens & Support
-
-Lavet af Jannick
