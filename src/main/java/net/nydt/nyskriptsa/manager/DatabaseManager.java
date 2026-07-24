@@ -106,24 +106,25 @@ public class DatabaseManager {
             return null;
         }
         String sql = "SELECT * FROM users WHERE uuid = ?;";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, uuid);
-            if (rs.next()) {
-                SAUser user = new SAUser();
-                user.setUuid(rs.getString("uuid"));
-                user.setUsername(rs.getString("username"));
-                user.setLobbyPoints(rs.getInt("lobbyPoints"));
-                user.setPlayerPoints(rs.getInt("playerPoints"));
-                user.setVipDays(rs.getInt("vipDays"));
-                user.setProDays(rs.getInt("proDays"));
-                user.setRole(rs.getString("role"));
-                user.setDiscordID(rs.getString("discordId"));
-                user.setRates(gson.fromJson(rs.getString("rates"), new TypeToken<List<Rate>>(){}.getType()));
-                user.setBadges(gson.fromJson(rs.getString("badges"), new TypeToken<List<Badge>>(){}.getType()));
-                user.setServers(gson.fromJson(rs.getString("servers"), new TypeToken<List<Server>>(){}.getType()));
-                user.setServerBoosts(gson.fromJson(rs.getString("serverBoosts"), new TypeToken<List<ServerBoost>>(){}.getType()));
-                return user;
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    SAUser user = new SAUser();
+                    user.setUuid(rs.getString("uuid"));
+                    user.setUsername(rs.getString("username"));
+                    user.setLobbyPoints(rs.getInt("lobbyPoints"));
+                    user.setPlayerPoints(rs.getInt("playerPoints"));
+                    user.setVipDays(rs.getInt("vipDays"));
+                    user.setProDays(rs.getInt("proDays"));
+                    user.setRole(rs.getString("role"));
+                    user.setDiscordID(rs.getString("discordId"));
+                    user.setRates(gson.fromJson(rs.getString("rates"), new TypeToken<List<Rate>>(){}.getType()));
+                    user.setBadges(gson.fromJson(rs.getString("badges"), new TypeToken<List<Badge>>(){}.getType()));
+                    user.setServers(gson.fromJson(rs.getString("servers"), new TypeToken<List<Server>>(){}.getType()));
+                    user.setServerBoosts(gson.fromJson(rs.getString("serverBoosts"), new TypeToken<List<ServerBoost>>(){}.getType()));
+                    return user;
+                }
             }
         } catch (SQLException e) {
             plugin.getLogger().log(Level.SEVERE, "Kunne ikke hente brugerdata med UUID " + uuid + ": " + e.getMessage(), e);

@@ -76,6 +76,35 @@ if player's badges > 5:
     give player diamond
 ```
 
+### Rating lister
+
+```skript
+%spiller's rates%               # Returnerer antal rate entries som integer
+%spiller's rateliste%           # Returnerer usernames for alle rates som en liste
+%spiller's plusrates%           # Returnerer antal positive rates som integer
+%spiller's plusratesliste%      # Returnerer usernames for positive rates som en liste
+%spiller's minusrates%          # Returnerer antal negative rates som integer
+%spiller's minusratesliste%     # Returnerer usernames for negative rates som en liste
+```
+
+**Eksempel:**
+```skript
+command /rateinfo <offline player>:
+    trigger:
+        send "&eRates: &f%arg-1's rates%"
+        send "&aPlus-rates: &f%arg-1's plusrates%"
+        send "&cMinus-rates: &f%arg-1's minusrates%"
+
+        loop arg-1's rateliste:
+            send "&8- &f%loop-value%"
+
+        loop arg-1's plusratesliste:
+            send "&a+ &f%loop-value%"
+
+        loop arg-1's minusratesliste:
+            send "&c- &f%loop-value%"
+```
+
 ## Skript Events
 
 Events bliver trigget når brugerdata ændrer sig. Alle events har adgang til `event-player`, `old-user` og `new-user`.
