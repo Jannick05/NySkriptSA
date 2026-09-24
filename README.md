@@ -4,10 +4,9 @@ NySkriptSA er et Skript addon plugin, der integrerer SuperAwesome API-data med M
 
 ## Installation
 
-1. Placer `NySkriptSA.jar` i `/plugins` mappen
-2. Installer [Skript](https://github.com/SkriptLang/Skript) hvis det ikke allerede er installeret
-3. Start serveren
-4. Pluginnet opretter automatisk en SQLite-database (`playerdata.db`) i plugin-mappen
+Kører på Paper 1.21.10 med Java 21 og [Skript 2.14.1](https://hangar.papermc.io/SkriptLang/Skript).
+
+Byg med `./gradlew build` (Windows: `gradlew.bat build`), og læg `build/libs/NySkriptSA-1.0.jar` i serverens `plugins`-mappe. Start serveren; pluginet opretter sin SQLite-database automatisk.
 
 ## Features
 
@@ -15,6 +14,7 @@ NySkriptSA er et Skript addon plugin, der integrerer SuperAwesome API-data med M
 - Periodisk opdatering af data for online spillere (hvert minut)
 - Skript expressions til at få brugeroplysninger
 - Events når brugerdata ændrer sig
+- Eventet `sa user loaded`, når spillerdata er hentet og gemt lokalt
 
 ## Skript Expressions
 
@@ -155,6 +155,8 @@ on servers change:
     send "Dine servere ændrede sig!"
 ```
 
+`badges.sk` bruger `on sa user loaded:` sammen med spillerens `vip days`, `role` og `server booster` properties til at tildele badges, når data først hentes.
+
 ### User Update Event
 
 ```skript
@@ -247,6 +249,7 @@ Check:
 - Er Skript installeret?
 - Korrekt Java version (Java 8+)
 - Plugin folder har skriveadgang
+- Serveren bruger Java 21 eller nyere
 
 ### API-fejl
 
@@ -269,6 +272,6 @@ Check plugin folder's skriveadgang og disk plads.
 
 ## Udvikler Info
 
-- **Gradle project**: Java 8 kompatibel
-- **Dependencies**: Bukkit API 1.8.8, Skript 2.7.0, SQLite JDBC
+- **Platform**: Paper 1.21.10, Java 21
+- **Dependencies**: Paper API 1.21.10, Skript 2.14.1, SQLite JDBC
 - **Package**: `net.nydt.nyskriptsa`

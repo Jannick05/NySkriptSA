@@ -25,6 +25,7 @@ public class UpdateTask extends BukkitRunnable {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             UUID uuid = player.getUniqueId();
+            String playerName = player.getName();
 
             new BukkitRunnable() {
                 @Override
@@ -32,76 +33,63 @@ public class UpdateTask extends BukkitRunnable {
                     SAUser oldUser = plugin.getDatabaseManager().getUser(uuid.toString());
 
                     if (oldUser == null) {
-                        plugin.getLogger().warning("Brugerdata for " + player.getName() + " er ikke fundet i databasen.");
+                        plugin.getLogger().warning("Brugerdata for " + playerName + " er ikke fundet i databasen.");
                         return;
                     }
 
-                    SAUser newUser = Request.retrieveUser(player.getName());
+                    SAUser newUser = Request.retrieveUser(playerName);
 
                     if (newUser == null) {
-                        plugin.getLogger().warning("Kunne ikke hente opdaterede data fra API'en for " + player.getName() + ".");
+                        plugin.getLogger().warning("Kunne ikke hente opdaterede data fra API'en for " + playerName + ".");
                         return;
                     }
 
-                    if (oldUser.getLobbyPoints() != newUser.getLobbyPoints()) {
-                        Bukkit.getPluginManager().callEvent(new SALobbyPointsChangeEvent(oldUser, newUser, player));
-                    }
-                    if (oldUser.getPlayerPoints() != newUser.getPlayerPoints()) {
-                        Bukkit.getPluginManager().callEvent(new SAPlayerPointsChangeEvent(oldUser, newUser, player));
-                    }
-
-                    if (!Objects.equals(oldUser.getRole(), newUser.getRole())) {
-                        Bukkit.getPluginManager().callEvent(new SARoleChangeEvent(oldUser, newUser, player));
-                    }
-                    if (!Objects.equals(oldUser.getVipDays(), newUser.getVipDays())) {
-                        Bukkit.getPluginManager().callEvent(new SAVipDaysChangeEvent(oldUser, newUser, player));
-                    }
-                    if (!Objects.equals(oldUser.getProDays(), newUser.getProDays())) {
-                        Bukkit.getPluginManager().callEvent(new SAProDaysChangeEvent(oldUser, newUser, player));
-                    }
-
-                    if (oldUser.getRates() != null && newUser.getRates() != null) {
-                        Map<String, SAUser.Rate> oldRatesByUuid = new HashMap<>();
-                        for (SAUser.Rate rate : oldUser.getRates()) {
-                            oldRatesByUuid.put(rate.getUuid(), rate);
-                        }
-
-                        for (SAUser.Rate newRate : newUser.getRates()) {
-                            SAUser.Rate oldRate = oldRatesByUuid.get(newRate.getUuid());
-
-                            if (oldRate == null) {
-                                Bukkit.getPluginManager().callEvent(new SARateReceivedEvent(oldUser, newUser, player, newRate));
-                            } else {
-                                if (oldRate.getPoints() != newRate.getPoints() || !Objects.equals(oldRate.getType(), newRate.getType())) {
-                                    Bukkit.getPluginManager().callEvent(new SARateChangedEvent(oldUser, newUser, player, oldRate, newRate));
-                                }
-                            }
-                        }
-                    }
-
-                    checkSetChanges(
-                            oldUser.getBadges(),
-                            newUser.getBadges(),
-                            (added, removed) -> Bukkit.getPluginManager().callEvent(new SABadgesChangeEvent(oldUser, newUser, player, added, removed))
-                    );
-
-                    checkSetChanges(
-                            oldUser.getServerBoosts(),
-                            newUser.getServerBoosts(),
-                            (added, removed) -> Bukkit.getPluginManager().callEvent(new SAServerBoostsChangeEvent(oldUser, newUser, player, added, removed))
-                    );
-
-                    checkSetChanges(
-                            oldUser.getServers(),
-                            newUser.getServers(),
-                            (added, removed) -> Bukkit.getPluginManager().callEvent(new SAServersChangeEvent(oldUser, newUser, player, added, removed))
-                    );
-
+                    newUser.setUuid(uuid.toString());
                     plugin.getDatabaseManager().saveUser(newUser);
-
+                    Bukkit.getScheduler().runTask(plugin, () -> {
+                        if (!player.isOnline()) return;
+                        fireChanges(oldUser, newUser, player);
+                    });
                 }
             }.runTaskAsynchronously(plugin);
         }
+    }
+
+    private void fireChanges(SAUser oldUser, SAUser newUser, Player player) {
+        if (oldUser.getLobbyPoints() != newUser.getLobbyPoints()) {
+            Bukkit.getPluginManager().callEvent(new SALobbyPointsChangeEvent(oldUser, newUser, player));
+        }
+        if (oldUser.getPlayerPoints() != newUser.getPlayerPoints()) {
+            Bukkit.getPluginManager().callEvent(new SAPlayerPointsChangeEvent(oldUser, newUser, player));
+        }
+        if (!Objects.equals(oldUser.getRole(), newUser.getRole())) {
+            Bukkit.getPluginManager().callEvent(new SARoleChangeEvent(oldUser, newUser, player));
+        }
+        if (!Objects.equals(oldUser.getVipDays(), newUser.getVipDays())) {
+            Bukkit.getPluginManager().callEvent(new SAVipDaysChangeEvent(oldUser, newUser, player));
+        }
+        if (!Objects.equals(oldUser.getProDays(), newUser.getProDays())) {
+            Bukkit.getPluginManager().callEvent(new SAProDaysChangeEvent(oldUser, newUser, player));
+        }
+        if (oldUser.getRates() != null && newUser.getRates() != null) {
+            Map<String, SAUser.Rate> oldRatesByUuid = new HashMap<>();
+            for (SAUser.Rate rate : oldUser.getRates()) oldRatesByUuid.put(rate.getUuid(), rate);
+            for (SAUser.Rate newRate : newUser.getRates()) {
+                SAUser.Rate oldRate = oldRatesByUuid.get(newRate.getUuid());
+                if (oldRate == null) {
+                    Bukkit.getPluginManager().callEvent(new SARateReceivedEvent(oldUser, newUser, player, newRate));
+                } else if (oldRate.getPoints() != newRate.getPoints()
+                        || !Objects.equals(oldRate.getType(), newRate.getType())) {
+                    Bukkit.getPluginManager().callEvent(new SARateChangedEvent(oldUser, newUser, player, oldRate, newRate));
+                }
+            }
+        }
+        checkSetChanges(oldUser.getBadges(), newUser.getBadges(), (added, removed) ->
+                Bukkit.getPluginManager().callEvent(new SABadgesChangeEvent(oldUser, newUser, player, added, removed)));
+        checkSetChanges(oldUser.getServerBoosts(), newUser.getServerBoosts(), (added, removed) ->
+                Bukkit.getPluginManager().callEvent(new SAServerBoostsChangeEvent(oldUser, newUser, player, added, removed)));
+        checkSetChanges(oldUser.getServers(), newUser.getServers(), (added, removed) ->
+                Bukkit.getPluginManager().callEvent(new SAServersChangeEvent(oldUser, newUser, player, added, removed)));
     }
 
     private <T> void checkSetChanges(List<T> oldList, List<T> newList, BiConsumer<Set<T>, Set<T>> onChange) {
