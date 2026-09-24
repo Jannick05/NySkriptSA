@@ -38,7 +38,7 @@ public class DatabaseManager {
         }
     }
 
-    public void disconnect() {
+    public synchronized void disconnect() {
         if (connection != null) {
             try {
                 connection.close();
@@ -49,7 +49,7 @@ public class DatabaseManager {
         }
     }
 
-    public void setupTables() {
+    public synchronized void setupTables() {
         if (connection == null) {
             plugin.getLogger().severe("Kan ikke oprette tabeller: Ingen databaseforbindelse.");
             return;
@@ -75,7 +75,7 @@ public class DatabaseManager {
         }
     }
 
-    public void saveUser(SAUser user) {
+    public synchronized void saveUser(SAUser user) {
         if (connection == null) {
             plugin.getLogger().severe("Kan ikke gemme data: Ingen databaseforbindelse.");
             return;
@@ -100,7 +100,7 @@ public class DatabaseManager {
         }
     }
 
-    public SAUser getUser(String uuid) {
+    public synchronized SAUser getUser(String uuid) {
         if (connection == null) {
             plugin.getLogger().severe("Kan ikke hente data: Ingen databaseforbindelse.");
             return null;

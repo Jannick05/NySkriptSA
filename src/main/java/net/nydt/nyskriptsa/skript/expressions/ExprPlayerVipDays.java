@@ -24,7 +24,7 @@ public class ExprPlayerVipDays extends SimplePropertyExpression<OfflinePlayer, I
             user = Request.retrieveUser(player.getName());
         }
 
-        return (user != null) ? user.getVipDays() : 0;
+        return user != null && user.getVipDays() != null ? user.getVipDays() : 0;
     }
 
     @Override
